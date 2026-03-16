@@ -65,6 +65,7 @@ export default function App() {
   const [theme, setTheme] = useState<'green' | 'navy'>('green');
   const [guestName, setGuestName] = useState('');
   const [inputName, setInputName] = useState('');
+  const [inputPhone, setInputPhone] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [typedText, setTypedText] = useState('');
   const [isCopied, setIsCopied] = useState(false);
@@ -162,6 +163,29 @@ export default function App() {
     frame();
   };
 
+  const sendWhatsApp = () => {
+    const baseUrl = window.location.origin + window.location.pathname;
+    const shareUrl = inputName 
+      ? `${baseUrl}?to=${inputName.trim().replace(/\s+/g, '-')}`
+      : baseUrl;
+    
+    const message = `Assalamu'alaikum, ini ada ucapan Idul Fitri untukmu: ${shareUrl}`;
+    const encodedMessage = encodeURIComponent(message);
+    
+    let cleanPhone = inputPhone.replace(/\D/g, '');
+    if (cleanPhone.startsWith('0')) {
+      cleanPhone = '62' + cleanPhone.slice(1);
+    } else if (cleanPhone.startsWith('8')) {
+      cleanPhone = '62' + cleanPhone;
+    }
+
+    const waUrl = cleanPhone 
+      ? `https://wa.me/${cleanPhone}?text=${encodedMessage}`
+      : `https://api.whatsapp.com/send?text=${encodedMessage}`;
+    
+    window.open(waUrl, '_blank');
+  };
+
   const copyLink = () => {
     const baseUrl = window.location.origin + window.location.pathname;
     const shareUrl = inputName 
@@ -213,7 +237,7 @@ export default function App() {
               
               {!isRecipient && (
                 <div className="mb-8 space-y-4">
-                  <div className="relative group">
+                  <div className="space-y-3">
                     <input
                       type="text"
                       placeholder="Nama Penerima (Opsional)"
@@ -221,12 +245,31 @@ export default function App() {
                       onChange={(e) => setInputName(e.target.value)}
                       className="w-full glass-input rounded-2xl px-5 py-3.5 text-sm text-yellow-100 placeholder:text-gray-600 focus:outline-none"
                     />
-                    <button 
-                      onClick={copyLink}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-500 hover:text-yellow-400 transition-all active:scale-90"
-                    >
-                      {isCopied ? <Check size={20} className="text-green-400" /> : <Copy size={20} />}
-                    </button>
+                    <div className="relative group">
+                      <input
+                        type="tel"
+                        placeholder="Nomor WA (Contoh: 0812...)"
+                        value={inputPhone}
+                        onChange={(e) => setInputPhone(e.target.value)}
+                        className="w-full glass-input rounded-2xl px-5 py-3.5 text-sm text-yellow-100 placeholder:text-gray-600 focus:outline-none"
+                      />
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                        <button 
+                          onClick={copyLink}
+                          className="p-2 text-gray-500 hover:text-yellow-400 transition-all active:scale-90"
+                          title="Salin Link"
+                        >
+                          {isCopied ? <Check size={18} className="text-green-400" /> : <Copy size={18} />}
+                        </button>
+                        <button 
+                          onClick={sendWhatsApp}
+                          className="p-2 text-emerald-400 hover:text-emerald-300 transition-all active:scale-90 bg-emerald-500/10 rounded-xl"
+                          title="Kirim via WhatsApp"
+                        >
+                          <Send size={18} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                   {isCopied && (
                     <motion.p 
@@ -234,7 +277,7 @@ export default function App() {
                       animate={{ opacity: 1, y: 0 }}
                       className="text-[11px] text-green-400 font-medium"
                     >
-                      Link berhasil disalin! Bagikan ke temanmu.
+                      Link berhasil disalin!
                     </motion.p>
                   )}
                 </div>
