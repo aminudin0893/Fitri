@@ -34,6 +34,7 @@ export default function App() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [typedText, setTypedText] = useState('');
   const [isCopied, setIsCopied] = useState(false);
+  const [isRecipient, setIsRecipient] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -42,6 +43,7 @@ export default function App() {
       const decodedName = to.replace(/-/g, ' ');
       setGuestName(decodedName);
       setInputName(decodedName);
+      setIsRecipient(true);
     }
   }, []);
 
@@ -144,28 +146,30 @@ export default function App() {
               <h1 className="text-xl md:text-2xl font-playfair font-bold text-white mb-1">Ucapan Idul Fitri</h1>
               <p className="text-gray-300 text-xs mb-6">Dari Keluarga Besar Aminudin</p>
               
-              {/* Recipient Input Section */}
-              <div className="mb-6 space-y-3">
-                <div className="relative group">
-                  <input
-                    type="text"
-                    placeholder="Nama Penerima (Opsional)"
-                    value={inputName}
-                    onChange={(e) => setInputName(e.target.value)}
-                    className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2.5 text-sm text-yellow-100 placeholder:text-gray-500 focus:outline-none focus:border-yellow-500/50 transition-all"
-                  />
-                  <button 
-                    onClick={copyLink}
-                    title="Salin Link untuk Dibagikan"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-yellow-400 transition-colors"
-                  >
-                    {isCopied ? <Check size={18} className="text-green-400" /> : <Copy size={18} />}
-                  </button>
+              {/* Recipient Input Section - Only show for sender (no 'to' param) */}
+              {!isRecipient && (
+                <div className="mb-6 space-y-3">
+                  <div className="relative group">
+                    <input
+                      type="text"
+                      placeholder="Nama Penerima (Opsional)"
+                      value={inputName}
+                      onChange={(e) => setInputName(e.target.value)}
+                      className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2.5 text-sm text-yellow-100 placeholder:text-gray-500 focus:outline-none focus:border-yellow-500/50 transition-all"
+                    />
+                    <button 
+                      onClick={copyLink}
+                      title="Salin Link untuk Dibagikan"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-yellow-400 transition-colors"
+                    >
+                      {isCopied ? <Check size={18} className="text-green-400" /> : <Copy size={18} />}
+                    </button>
+                  </div>
+                  {isCopied && (
+                    <p className="text-[10px] text-green-400 animate-pulse">Link berhasil disalin!</p>
+                  )}
                 </div>
-                {isCopied && (
-                  <p className="text-[10px] text-green-400 animate-pulse">Link berhasil disalin!</p>
-                )}
-              </div>
+              )}
 
               {(inputName || guestName) && (
                 <div className="mb-6 p-3 rounded-xl bg-white/5 border border-white/10 shadow-inner">
@@ -276,6 +280,22 @@ export default function App() {
                   Keluarga Besar Aminudin
                 </h2>
               </div>
+
+              {isRecipient && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 2 }}
+                  className="mt-12"
+                >
+                  <a 
+                    href={window.location.origin + window.location.pathname}
+                    className="text-xs text-yellow-500/60 hover:text-yellow-400 transition-colors border border-yellow-500/20 rounded-full px-4 py-2 bg-yellow-500/5"
+                  >
+                    Buat Ucapanmu Sendiri
+                  </a>
+                </motion.div>
+              )}
             </motion.div>
 
             {/* Controls */}
