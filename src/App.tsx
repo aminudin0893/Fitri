@@ -84,14 +84,38 @@ export default function App() {
   useEffect(() => {
     if (isOpen) {
       let i = 0;
+      const personalizedMessage = guestName 
+        ? `Untuk Sahabatku, ${guestName}.\n\n${MESSAGE}`
+        : MESSAGE;
+        
       const interval = setInterval(() => {
-        setTypedText(MESSAGE.slice(0, i));
+        setTypedText(personalizedMessage.slice(0, i));
         i++;
-        if (i > MESSAGE.length) clearInterval(interval);
+        if (i > personalizedMessage.length) clearInterval(interval);
       }, 30);
       return () => clearInterval(interval);
     }
-  }, [isOpen]);
+  }, [isOpen, guestName]);
+
+  useEffect(() => {
+    if (isOpen && isRecipient && guestName) {
+      // Simulasi pengiriman notifikasi baca ke nomor 6285227853488
+      // Menggunakan fetch ke layanan webhook atau API eksternal
+      const notifySender = async () => {
+        try {
+          // Contoh penggunaan webhook (Anda bisa mengganti URL ini dengan API gateway WhatsApp Anda)
+          // await fetch('https://your-api-gateway.com/notify', {
+          //   method: 'POST',
+          //   body: JSON.stringify({ to: '6285227853488', message: `Pesan kamu dibaca oleh ${guestName}` })
+          // });
+          console.log(`Notifikasi otomatis dikirim ke 6285227853488: Pesan dibaca oleh ${guestName}`);
+        } catch (e) {
+          console.error("Gagal mengirim notifikasi otomatis", e);
+        }
+      };
+      notifySender();
+    }
+  }, [isOpen, isRecipient, guestName]);
 
   useEffect(() => {
     if (isOpen) {
@@ -323,7 +347,7 @@ export default function App() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.6 }}
-                      className="text-gray-300 italic font-playfair text-xl md:text-2xl leading-relaxed"
+                      className="text-gray-200 font-poppins text-base md:text-lg leading-relaxed tracking-wide"
                     >
                       "{QUOTES[currentSlide]}"
                     </motion.div>
