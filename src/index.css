@@ -70,15 +70,15 @@
 }
 
 .glass-input {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-input:focus {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(251, 191, 36, 0.3);
-  box-shadow: 0 0 25px rgba(251, 191, 36, 0.05);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(251, 191, 36, 0.5);
+  box-shadow: 0 0 25px rgba(251, 191, 36, 0.1);
 }
 
 .text-gradient {

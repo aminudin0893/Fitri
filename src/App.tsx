@@ -64,6 +64,7 @@ export default function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState<'green' | 'navy' | 'romantic'>('green');
   const [guestName, setGuestName] = useState('');
+  const [category, setCategory] = useState<'Sahabat' | 'Saudara' | 'Keluarga'>('Sahabat');
   const [inputName, setInputName] = useState('');
   const [inputPhone, setInputPhone] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -74,6 +75,8 @@ export default function App() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const to = params.get('to');
+    const cat = params.get('cat');
+    if (cat) setCategory(cat as any);
     if (to) {
       const decodedName = to.replace(/-/g, ' ');
       setGuestName(decodedName);
@@ -86,7 +89,7 @@ export default function App() {
     if (isOpen) {
       let i = 0;
       const personalizedMessage = guestName 
-        ? `Untuk Sahabatku, ${guestName}.\n\n${MESSAGE}`
+        ? `Untuk ${category}ku, ${guestName}.\n\n${MESSAGE}`
         : MESSAGE;
         
       const interval = setInterval(() => {
@@ -170,10 +173,11 @@ export default function App() {
   const sendWhatsApp = () => {
     const baseUrl = window.location.origin + window.location.pathname;
     const shareUrl = inputName 
-      ? `${baseUrl}?to=${inputName.trim().replace(/\s+/g, '-')}`
-      : baseUrl;
+      ? `${baseUrl}?to=${inputName.trim().replace(/\s+/g, '-')}&cat=${category}`
+      : `${baseUrl}?cat=${category}`;
     
-    const message = `Assalamu'alaikum, ini ada ucapan Idul Fitri untukmu: ${shareUrl}`;
+    const recipient = inputName ? inputName.trim() : category;
+    const message = `Assalamu'alaikum ${recipient},\n\nKami dari Keluarga Besar Aminudin ingin menyampaikan ucapan terindah di hari yang fitri ini. Mohon maaf lahir dan batin atas segala khilaf.\n\nSilakan buka pesan spesial untukmu di sini:\n${shareUrl}`;
     const encodedMessage = encodeURIComponent(message);
     
     let cleanPhone = inputPhone.replace(/\D/g, '');
@@ -193,8 +197,8 @@ export default function App() {
   const copyLink = () => {
     const baseUrl = window.location.origin + window.location.pathname;
     const shareUrl = inputName 
-      ? `${baseUrl}?to=${inputName.trim().replace(/\s+/g, '-')}`
-      : baseUrl;
+      ? `${baseUrl}?to=${inputName.trim().replace(/\s+/g, '-')}&cat=${category}`
+      : `${baseUrl}?cat=${category}`;
     
     navigator.clipboard.writeText(shareUrl).then(() => {
       setIsCopied(true);
@@ -241,13 +245,28 @@ export default function App() {
               
               {!isRecipient && (
                 <div className="mb-8 space-y-4">
+                  <div className="flex gap-2 p-1 bg-white/5 rounded-2xl border border-white/10">
+                    {(['Sahabat', 'Saudara', 'Keluarga'] as const).map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setCategory(cat)}
+                        className={`flex-1 py-2 text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all ${
+                          category === cat 
+                            ? 'bg-yellow-400 text-emerald-950 shadow-lg' 
+                            : 'text-gray-400 hover:text-white'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
                   <div className="space-y-3">
                     <input
                       type="text"
                       placeholder="Nama Penerima (Opsional)"
                       value={inputName}
                       onChange={(e) => setInputName(e.target.value)}
-                      className="w-full glass-input rounded-2xl px-5 py-3.5 text-sm text-yellow-100 placeholder:text-gray-600 focus:outline-none"
+                      className="w-full glass-input rounded-2xl px-5 py-3.5 text-sm text-white placeholder:text-gray-500 focus:outline-none font-medium"
                     />
                     <div className="relative group">
                       <input
@@ -255,7 +274,7 @@ export default function App() {
                         placeholder="Nomor WA (Contoh: 0812...)"
                         value={inputPhone}
                         onChange={(e) => setInputPhone(e.target.value)}
-                        className="w-full glass-input rounded-2xl px-5 py-3.5 text-sm text-yellow-100 placeholder:text-gray-600 focus:outline-none"
+                        className="w-full glass-input rounded-2xl px-5 py-3.5 text-sm text-white placeholder:text-gray-500 focus:outline-none font-medium"
                       />
                       <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
                         <button 
@@ -377,10 +396,10 @@ export default function App() {
                 "Taqabbalallahu minna wa minkum shiyamana wa shiyamakum"
               </p>
 
-              <div className="text-gray-200 leading-relaxed text-base md:text-lg font-light mb-12 max-w-lg mx-auto min-h-[160px] whitespace-pre-line relative">
+              <div className="text-white leading-relaxed text-base md:text-lg font-medium mb-12 max-w-lg mx-auto min-h-[160px] whitespace-pre-line relative font-poppins">
                 <span className="relative z-10">{typedText}</span>
                 <span className="inline-block w-[2px] h-6 bg-yellow-400 ml-1 animate-pulse align-middle" />
-                <div className="absolute -top-4 -left-4 text-white/5 font-playfair text-8xl pointer-events-none">"</div>
+                <div className="absolute -top-4 -left-4 text-white/10 font-playfair text-8xl pointer-events-none">"</div>
               </div>
 
               {/* Modern Slider */}
