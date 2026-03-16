@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Mail, 
@@ -11,9 +11,10 @@ import {
   Moon, 
   Star, 
   Palette,
-  Share2,
   Copy,
-  Check
+  Check,
+  Sparkles,
+  Send
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { themes } from './types';
@@ -25,6 +26,39 @@ const QUOTES = [
 ];
 
 const MESSAGE = "Bila ada langkah membekas lara, ada kata merangkai dusta, ada tingkah menoreh luka, di hari yang fitri ini kami memohon dibukakan pintu maaf yang sebesar-besarnya.\n\nMinal Aidin Wal Faizin, Mohon Maaf Lahir dan Batin.\nSemoga Allah SWT menerima amal ibadah kita dan mempertemukan kita dengan Ramadhan berikutnya.";
+
+const StarryBackground = () => {
+  const stars = useMemo(() => {
+    return Array.from({ length: 50 }).map((_, i) => ({
+      id: i,
+      size: Math.random() * 2 + 1,
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 5}s`,
+      duration: `${Math.random() * 3 + 2}s`,
+    }));
+  }, []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {stars.map((star) => (
+        <div
+          key={star.id}
+          className="star animate-twinkle"
+          style={{
+            width: `${star.size}px`,
+            height: `${star.size}px`,
+            top: star.top,
+            left: star.left,
+            animationDelay: star.delay,
+            animationDuration: star.duration,
+            boxShadow: '0 0 5px white',
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 
 export default function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -119,73 +153,88 @@ export default function App() {
   const activeTheme = themes[theme];
 
   return (
-    <div className={`min-h-screen ${activeTheme.dark} text-white selection:bg-yellow-500/30 transition-colors duration-1000 overflow-hidden`}>
+    <div className={`min-h-screen ${activeTheme.dark} text-white selection:bg-yellow-500/30 transition-colors duration-1000 overflow-hidden relative`}>
+      <StarryBackground />
+      
       <AnimatePresence mode="wait">
         {!isOpen ? (
           <motion.div
             key="cover"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ y: '-100%', opacity: 0 }}
-            transition={{ duration: 1, ease: [0.65, 0, 0.35, 1] }}
+            exit={{ y: '-100%', opacity: 0, scale: 1.1 }}
+            transition={{ duration: 1.2, ease: [0.65, 0, 0.35, 1] }}
             className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br ${activeTheme.mid} px-4`}
           >
-            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
+            <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
             
             <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="relative z-10 glass-card p-6 md:p-10 rounded-3xl border border-yellow-500/30 text-center max-w-sm w-full shadow-2xl"
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+              className="relative z-10 glass-card p-8 md:p-12 rounded-[2.5rem] border border-white/10 text-center max-w-sm w-full shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)]"
             >
-              <div className="w-16 h-16 mx-auto mb-4 text-yellow-400 animate-float">
-                <Mail size={64} strokeWidth={1.5} />
+              <div className="relative mb-8">
+                <div className="w-24 h-24 mx-auto bg-gradient-to-tr from-yellow-500/20 to-yellow-300/40 rounded-full flex items-center justify-center animate-float">
+                  <Mail size={48} className="text-yellow-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]" strokeWidth={1.5} />
+                </div>
+                <div className="absolute -top-2 -right-2 animate-twinkle">
+                  <Sparkles size={24} className="text-yellow-300" />
+                </div>
               </div>
               
-              <h2 className="text-yellow-400 font-poppins text-xs tracking-widest uppercase mb-1">Ada Pesan Untukmu</h2>
-              <h1 className="text-xl md:text-2xl font-playfair font-bold text-white mb-1">Ucapan Idul Fitri</h1>
-              <p className="text-gray-300 text-xs mb-6">Dari Keluarga Besar Aminudin</p>
+              <h2 className="text-yellow-400 font-poppins text-xs tracking-[0.3em] uppercase mb-3 font-semibold opacity-80">Ada Pesan Untukmu</h2>
+              <h1 className="text-3xl md:text-4xl font-playfair font-bold text-white mb-2 tracking-tight">Ucapan <span className="text-gradient">Idul Fitri</span></h1>
+              <p className="text-gray-400 text-sm mb-8 font-light">Dari Keluarga Besar Aminudin</p>
               
-              {/* Recipient Input Section - Only show for sender (no 'to' param) */}
               {!isRecipient && (
-                <div className="mb-6 space-y-3">
+                <div className="mb-8 space-y-4">
                   <div className="relative group">
                     <input
                       type="text"
                       placeholder="Nama Penerima (Opsional)"
                       value={inputName}
                       onChange={(e) => setInputName(e.target.value)}
-                      className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2.5 text-sm text-yellow-100 placeholder:text-gray-500 focus:outline-none focus:border-yellow-500/50 transition-all"
+                      className="w-full glass-input rounded-2xl px-5 py-3.5 text-sm text-yellow-100 placeholder:text-gray-600 focus:outline-none"
                     />
                     <button 
                       onClick={copyLink}
-                      title="Salin Link untuk Dibagikan"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-yellow-400 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-500 hover:text-yellow-400 transition-all active:scale-90"
                     >
-                      {isCopied ? <Check size={18} className="text-green-400" /> : <Copy size={18} />}
+                      {isCopied ? <Check size={20} className="text-green-400" /> : <Copy size={20} />}
                     </button>
                   </div>
                   {isCopied && (
-                    <p className="text-[10px] text-green-400 animate-pulse">Link berhasil disalin!</p>
+                    <motion.p 
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-[11px] text-green-400 font-medium"
+                    >
+                      Link berhasil disalin! Bagikan ke temanmu.
+                    </motion.p>
                   )}
                 </div>
               )}
 
               {(inputName || guestName) && (
-                <div className="mb-6 p-3 rounded-xl bg-white/5 border border-white/10 shadow-inner">
-                  <p className="text-[10px] text-gray-400 mb-0.5">Kepada Yth.</p>
-                  <p className="text-base font-semibold text-yellow-300 capitalize">{inputName || guestName}</p>
-                </div>
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="mb-8 p-4 rounded-2xl bg-white/[0.03] border border-white/5 shadow-inner backdrop-blur-sm"
+                >
+                  <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-1 font-bold">Kepada Yth.</p>
+                  <p className="text-xl font-playfair font-bold text-yellow-300 capitalize tracking-wide">{inputName || guestName}</p>
+                </motion.div>
               )}
               
               <button 
                 onClick={handleOpen}
-                className="group relative inline-flex items-center justify-center px-8 py-2.5 font-bold text-emerald-900 bg-gradient-to-r from-yellow-300 to-yellow-500 rounded-full overflow-hidden shadow-lg shadow-yellow-500/30 transition-all hover:scale-105 hover:shadow-yellow-500/50"
+                className="group relative w-full inline-flex items-center justify-center px-8 py-4 font-bold text-emerald-950 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 rounded-2xl overflow-hidden shadow-[0_20px_40px_-10px_rgba(251,191,36,0.3)] transition-all hover:scale-[1.02] active:scale-95"
               >
-                <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
-                <span className="relative flex items-center gap-2 text-sm">
+                <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                <span className="relative flex items-center gap-3 text-base uppercase tracking-wider">
                   Buka Ucapan
-                  <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </span>
               </button>
             </motion.div>
@@ -193,119 +242,121 @@ export default function App() {
         ) : (
           <motion.main
             key="content"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className={`relative min-h-screen bg-gradient-to-b ${activeTheme.mid} flex flex-col items-center justify-center py-12 px-4 overflow-y-auto`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            className={`relative min-h-screen bg-gradient-to-b ${activeTheme.mid} flex flex-col items-center justify-center py-16 px-4 overflow-y-auto`}
           >
-            {/* Background Decorations */}
-            <div className="absolute top-0 left-4 md:left-20 animate-swing">
-              <div className="w-1 h-16 md:h-24 bg-gradient-to-b from-yellow-400/0 to-yellow-400 mx-auto" />
-              <Moon className="text-yellow-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]" size={48} fill="currentColor" />
+            {/* Immersive Decorations */}
+            <div className="absolute top-0 left-4 md:left-24 animate-swing">
+              <div className="w-[2px] h-24 md:h-40 bg-gradient-to-b from-yellow-400/0 via-yellow-400/50 to-yellow-400 mx-auto" />
+              <div className="p-3 bg-yellow-500/10 rounded-full backdrop-blur-sm border border-yellow-500/20 shadow-[0_0_30px_rgba(251,191,36,0.3)]">
+                <Moon className="text-yellow-400" size={40} fill="currentColor" />
+              </div>
             </div>
             
-            <div className="absolute top-0 right-4 md:right-20 animate-swing" style={{ animationDelay: '1s' }}>
-              <div className="w-1 h-12 md:h-16 bg-gradient-to-b from-yellow-400/0 to-yellow-400 mx-auto" />
-              <Star className="text-yellow-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]" size={32} fill="currentColor" />
+            <div className="absolute top-12 right-4 md:right-24 animate-swing" style={{ animationDelay: '1.5s' }}>
+              <div className="w-[2px] h-16 md:h-32 bg-gradient-to-b from-yellow-400/0 via-yellow-400/50 to-yellow-400 mx-auto" />
+              <div className="p-2 bg-yellow-500/10 rounded-full backdrop-blur-sm border border-yellow-500/20 shadow-[0_0_20px_rgba(251,191,36,0.2)]">
+                <Star className="text-yellow-400" size={24} fill="currentColor" />
+              </div>
             </div>
 
-            {/* Main Card */}
+            {/* Main Content Card */}
             <motion.div 
-              initial={{ y: 20, opacity: 0 }}
+              initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="relative z-10 glass-card w-full max-w-2xl rounded-[2.5rem] p-6 md:p-12 shadow-2xl border border-yellow-500/20 text-center my-8"
+              transition={{ duration: 1, delay: 0.2 }}
+              className="relative z-10 glass-card w-full max-w-2xl rounded-[3rem] p-8 md:p-16 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.7)] border border-white/10 text-center my-8"
             >
-              <div className="flex justify-center mb-6">
-                <div className="relative w-16 h-16 md:w-20 md:h-20 text-yellow-400 animate-float">
-                  <Moon size={80} fill="currentColor" className="drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]" />
-                </div>
+              <div className="flex justify-center mb-8">
+                <motion.div 
+                  animate={{ rotate: [0, 5, -5, 0] }}
+                  transition={{ duration: 6, repeat: Infinity }}
+                  className="relative"
+                >
+                  <Moon size={80} fill="currentColor" className="text-yellow-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" />
+                  <div className="absolute -top-4 -right-4 animate-twinkle">
+                    <Sparkles size={32} className="text-yellow-300" />
+                  </div>
+                </motion.div>
               </div>
 
-              <div className="inline-block px-4 py-1 rounded-full border border-yellow-500/50 bg-yellow-500/10 text-yellow-300 text-xs md:text-sm font-medium tracking-widest mb-6">
+              <div className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full border border-yellow-500/30 bg-yellow-500/5 text-yellow-300 text-xs md:text-sm font-semibold tracking-[0.2em] uppercase mb-8 backdrop-blur-md">
+                <Star size={14} fill="currentColor" />
                 1 Syawal 1447 H
+                <Star size={14} fill="currentColor" />
               </div>
 
-              <h1 className="font-playfair text-3xl md:text-5xl font-bold text-white mb-2 leading-tight">
+              <h1 className="font-playfair text-4xl md:text-6xl font-bold text-white mb-4 leading-tight tracking-tight">
                 Selamat Hari Raya <br /> 
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200">
-                  Idul Fitri
-                </span>
+                <span className="text-gradient">Idul Fitri</span>
               </h1>
 
-              <div className="w-24 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto my-6" />
+              <div className="flex items-center justify-center gap-4 my-8">
+                <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-yellow-500/50" />
+                <div className="w-2 h-2 rounded-full bg-yellow-500 animate-twinkle" />
+                <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-yellow-500/50" />
+              </div>
 
-              <div className="font-amiri text-2xl md:text-4xl text-yellow-400 mb-4 leading-loose" dir="rtl">
+              <div className="font-amiri text-3xl md:text-5xl text-yellow-400 mb-6 leading-loose drop-shadow-lg" dir="rtl">
                 تَقَبَّلَ اللَّهُ مِنَّا وَمِنْكُمْ صِيَامَنَا وَصِيَامَكُمْ
               </div>
-              <p className="text-yellow-200/80 italic text-xs md:text-sm mb-8">
+              <p className="text-yellow-200/60 italic text-sm md:text-base mb-10 font-light tracking-wide">
                 "Taqabbalallahu minna wa minkum shiyamana wa shiyamakum"
               </p>
 
-              <div className="text-gray-200 leading-relaxed text-sm md:text-base font-light mb-10 max-w-lg mx-auto min-h-[140px] whitespace-pre-line">
-                {typedText}
-                <span className="inline-block w-1 h-5 bg-yellow-400 ml-1 animate-pulse" />
+              <div className="text-gray-200 leading-relaxed text-base md:text-lg font-light mb-12 max-w-lg mx-auto min-h-[160px] whitespace-pre-line relative">
+                <span className="relative z-10">{typedText}</span>
+                <span className="inline-block w-[2px] h-6 bg-yellow-400 ml-1 animate-pulse align-middle" />
+                <div className="absolute -top-4 -left-4 text-white/5 font-playfair text-8xl pointer-events-none">"</div>
               </div>
 
-              {/* Slider */}
-              <div className="mt-8 mb-10 border-t border-white/10 pt-8">
-                <h3 className="font-playfair text-xl md:text-2xl text-yellow-300 mb-6 italic">Untaian Doa & Harapan</h3>
-                <div className="relative w-full min-h-[120px] bg-black/20 backdrop-blur-sm rounded-2xl p-6 border border-yellow-500/20 overflow-hidden">
+              {/* Modern Slider */}
+              <div className="mt-12 mb-12 border-t border-white/5 pt-12">
+                <h3 className="font-playfair text-2xl md:text-3xl text-yellow-300 mb-8 italic tracking-wide">Untaian Doa & Harapan</h3>
+                <div className="relative w-full min-h-[140px] bg-white/[0.02] backdrop-blur-md rounded-[2rem] p-8 border border-white/5 overflow-hidden shadow-inner group">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentSlide}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      className="text-gray-200 italic font-playfair text-lg leading-relaxed"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.6 }}
+                      className="text-gray-300 italic font-playfair text-xl md:text-2xl leading-relaxed"
                     >
                       "{QUOTES[currentSlide]}"
                     </motion.div>
                   </AnimatePresence>
                   
-                  <div className="absolute bottom-3 right-3 flex gap-1.5">
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                     {QUOTES.map((_, idx) => (
                       <button 
                         key={idx}
                         onClick={() => setCurrentSlide(idx)}
-                        className={`w-2 h-2 rounded-full transition-all ${idx === currentSlide ? 'bg-yellow-400 w-4 shadow-[0_0_5px_#fbbf24]' : 'bg-white/30'}`}
+                        className={`h-1.5 rounded-full transition-all duration-500 ${idx === currentSlide ? 'bg-yellow-400 w-8 shadow-[0_0_10px_#fbbf24]' : 'bg-white/10 w-2 hover:bg-white/20'}`}
                       />
                     ))}
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-white/10">
-                <p className="text-sm text-gray-300 mb-2">Salam Hangat Dari,</p>
-                <h2 className="font-playfair text-2xl md:text-3xl font-bold text-yellow-400 tracking-wide drop-shadow-md">
+              <div className="mt-12 pt-8 border-t border-white/5">
+                <p className="text-xs text-gray-500 uppercase tracking-[0.3em] mb-3 font-bold">Salam Hangat Dari,</p>
+                <h2 className="font-playfair text-3xl md:text-4xl font-bold text-gradient tracking-wider">
                   Keluarga Besar Aminudin
                 </h2>
               </div>
-
-              {isRecipient && (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 2 }}
-                  className="mt-12"
-                >
-                  <a 
-                    href={window.location.origin + window.location.pathname}
-                    className="text-xs text-yellow-500/60 hover:text-yellow-400 transition-colors border border-yellow-500/20 rounded-full px-4 py-2 bg-yellow-500/5"
-                  >
-                    Buat Ucapanmu Sendiri
-                  </a>
-                </motion.div>
-              )}
             </motion.div>
 
-            {/* Controls */}
-            <div className="fixed bottom-6 right-6 z-50">
+            {/* Floating Control */}
+            <div className="fixed bottom-8 right-8 z-50">
               <button 
                 onClick={toggleTheme}
-                className="bg-yellow-500/20 backdrop-blur-md border border-yellow-500/50 text-yellow-400 w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:bg-yellow-500/40 transition-colors"
+                className="bg-white/5 backdrop-blur-xl border border-white/10 text-yellow-400 w-12 h-12 rounded-2xl flex items-center justify-center shadow-2xl hover:bg-white/10 hover:scale-110 active:scale-90 transition-all duration-300 group"
                 title="Ganti Tema"
               >
-                <Palette size={20} />
+                <Palette size={24} className="group-hover:rotate-12 transition-transform" />
               </button>
             </div>
           </motion.main>
