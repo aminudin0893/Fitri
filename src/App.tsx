@@ -62,7 +62,7 @@ const StarryBackground = () => {
 
 export default function App() {
   const [isOpen, setIsOpen] = useState(false);
-  const [theme, setTheme] = useState<'green' | 'navy'>('green');
+  const [theme, setTheme] = useState<'green' | 'navy' | 'romantic'>('green');
   const [guestName, setGuestName] = useState('');
   const [inputName, setInputName] = useState('');
   const [inputPhone, setInputPhone] = useState('');
@@ -133,7 +133,11 @@ export default function App() {
   };
 
   const toggleTheme = () => {
-    setTheme(prev => prev === 'green' ? 'navy' : 'green');
+    setTheme(prev => {
+      if (prev === 'green') return 'navy';
+      if (prev === 'navy') return 'romantic';
+      return 'green';
+    });
   };
 
   const fireConfetti = () => {
@@ -220,20 +224,20 @@ export default function App() {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.8 }}
-              className="relative z-10 glass-card p-8 md:p-12 rounded-[2.5rem] border border-white/10 text-center max-w-sm w-full shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)]"
+              className="relative z-10 glass-card p-8 md:p-12 rounded-[3rem] border border-white/10 text-center max-w-sm w-full shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] shimmer"
             >
-              <div className="relative mb-8">
-                <div className="w-24 h-24 mx-auto bg-gradient-to-tr from-yellow-500/20 to-yellow-300/40 rounded-full flex items-center justify-center animate-float">
-                  <Mail size={48} className="text-yellow-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]" strokeWidth={1.5} />
+              <div className="relative mb-10">
+                <div className="w-28 h-28 mx-auto bg-gradient-to-tr from-yellow-500/20 to-yellow-300/40 rounded-full flex items-center justify-center animate-float romantic-glow">
+                  <Mail size={56} className="text-yellow-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]" strokeWidth={1} />
                 </div>
                 <div className="absolute -top-2 -right-2 animate-twinkle">
-                  <Sparkles size={24} className="text-yellow-300" />
+                  <Sparkles size={28} className="text-yellow-300" />
                 </div>
               </div>
               
-              <h2 className="text-yellow-400 font-poppins text-xs tracking-[0.3em] uppercase mb-3 font-semibold opacity-80">Ada Pesan Untukmu</h2>
-              <h1 className="text-3xl md:text-4xl font-playfair font-bold text-white mb-2 tracking-tight">Ucapan <span className="text-gradient">Idul Fitri</span></h1>
-              <p className="text-gray-400 text-sm mb-8 font-light">Dari Keluarga Besar Aminudin</p>
+              <h2 className="text-yellow-400 font-poppins text-xs tracking-[0.4em] uppercase mb-4 font-bold opacity-90">Pesan Eksklusif Untukmu</h2>
+              <h1 className="text-4xl md:text-5xl font-playfair font-bold text-white mb-3 tracking-tight">Ucapan <span className="text-gradient">Idul Fitri</span></h1>
+              <p className="text-gray-400 text-sm mb-10 font-light tracking-widest">Keluarga Besar Aminudin</p>
               
               {!isRecipient && (
                 <div className="mb-8 space-y-4">
@@ -296,7 +300,7 @@ export default function App() {
               
               <button 
                 onClick={handleOpen}
-                className="group relative w-full inline-flex items-center justify-center px-8 py-4 font-bold text-emerald-950 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 rounded-2xl overflow-hidden shadow-[0_20px_40px_-10px_rgba(251,191,36,0.3)] transition-all hover:scale-[1.02] active:scale-95"
+                className="group relative w-full inline-flex items-center justify-center px-8 py-4 font-bold text-emerald-950 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 rounded-2xl overflow-hidden shadow-[0_20px_40px_-10px_rgba(251,191,36,0.3)] transition-all hover:scale-[1.02] active:scale-95 shimmer"
               >
                 <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                 <span className="relative flex items-center gap-3 text-base uppercase tracking-wider">
@@ -333,18 +337,18 @@ export default function App() {
             <motion.div 
               initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1, delay: 0.2 }}
-              className="relative z-10 glass-card w-full max-w-2xl rounded-[3rem] p-8 md:p-16 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.7)] border border-white/10 text-center my-8"
+              transition={{ duration: 1.2, delay: 0.2 }}
+              className="relative z-10 glass-card w-full max-w-2xl rounded-[4rem] p-10 md:p-20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] border border-white/10 text-center my-12 shimmer"
             >
-              <div className="flex justify-center mb-8">
+              <div className="flex justify-center mb-10">
                 <motion.div 
-                  animate={{ rotate: [0, 5, -5, 0] }}
-                  transition={{ duration: 6, repeat: Infinity }}
+                  animate={{ rotate: [0, 8, -8, 0], scale: [1, 1.05, 0.95, 1] }}
+                  transition={{ duration: 8, repeat: Infinity }}
                   className="relative"
                 >
-                  <Moon size={80} fill="currentColor" className="text-yellow-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" />
-                  <div className="absolute -top-4 -right-4 animate-twinkle">
-                    <Sparkles size={32} className="text-yellow-300" />
+                  <Moon size={100} fill="currentColor" className="text-yellow-400 drop-shadow-[0_0_30px_rgba(251,191,36,0.7)] romantic-glow" />
+                  <div className="absolute -top-6 -right-6 animate-twinkle">
+                    <Sparkles size={40} className="text-yellow-300" />
                   </div>
                 </motion.div>
               </div>

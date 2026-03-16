@@ -16,8 +16,13 @@ export const themes: Record<string, AppTheme> = {
     text: 'text-[#064e3b]',
   },
   navy: {
-    dark: 'bg-[#0f172a]',
-    mid: 'from-[#0f172a] via-[#1e3a8a] to-[#0f172a]',
-    text: 'text-[#1e3a8a]',
+    dark: 'bg-[#020617]',
+    mid: 'from-[#020617] via-[#1e1b4b] to-[#020617]',
+    text: 'text-[#1e1b4b]',
+  },
+  romantic: {
+    dark: 'bg-[#1c1917]',
+    mid: 'from-[#1c1917] via-[#44403c] to-[#1c1917]',
+    text: 'text-[#44403c]',
   },
 };
