@@ -14,7 +14,9 @@ import {
   Copy,
   Check,
   Sparkles,
-  Send
+  Send,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { themes } from './types';
@@ -71,6 +73,8 @@ export default function App() {
   const [typedText, setTypedText] = useState('');
   const [isCopied, setIsCopied] = useState(false);
   const [isRecipient, setIsRecipient] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -130,9 +134,22 @@ export default function App() {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (isOpen && audioRef.current) {
+      audioRef.current.play().catch(err => console.log("Autoplay blocked or failed:", err));
+    }
+  }, [isOpen]);
+
   const handleOpen = () => {
     setIsOpen(true);
     fireConfetti();
+  };
+
+  const toggleMute = () => {
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
   };
 
   const toggleTheme = () => {
@@ -440,7 +457,23 @@ export default function App() {
             </motion.div>
 
             {/* Floating Control */}
-            <div className="fixed bottom-8 right-8 z-50">
+            <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-4">
+              <audio
+                ref={audioRef}
+                src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a1b2b2.mp3?filename=islamic-background-music-111530.mp3"
+                loop
+              />
+              {isOpen && (
+                <motion.button
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  onClick={toggleMute}
+                  className="bg-white/5 backdrop-blur-xl border border-white/10 text-yellow-400 w-12 h-12 rounded-2xl flex items-center justify-center shadow-2xl hover:bg-white/10 hover:scale-110 active:scale-90 transition-all duration-300 group"
+                  title={isMuted ? "Nyalakan Musik" : "Matikan Musik"}
+                >
+                  {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+                </motion.button>
+              )}
               <button 
                 onClick={toggleTheme}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 text-yellow-400 w-12 h-12 rounded-2xl flex items-center justify-center shadow-2xl hover:bg-white/10 hover:scale-110 active:scale-90 transition-all duration-300 group"
