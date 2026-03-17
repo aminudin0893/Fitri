@@ -90,6 +90,12 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.load();
+    }
+  }, []);
+
+  useEffect(() => {
     if (isOpen) {
       let i = 0;
       const personalizedMessage = guestName 
@@ -143,14 +149,23 @@ export default function App() {
   const handleOpen = () => {
     setIsOpen(true);
     fireConfetti();
-    // Force play audio on user interaction
+    
+    // Improved audio trigger for mobile/Vercel
     if (audioRef.current) {
       audioRef.current.muted = false;
-      audioRef.current.play().catch(err => {
-        console.log("Playback failed:", err);
-        // Fallback: try playing again after a short delay
-        setTimeout(() => audioRef.current?.play(), 100);
-      });
+      const playPromise = audioRef.current.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log("Autoplay prevented:", error);
+          // Retry on next interaction if needed
+          const retryPlay = () => {
+            audioRef.current?.play();
+            window.removeEventListener('click', retryPlay);
+          };
+          window.addEventListener('click', retryPlay);
+        });
+      }
     }
   };
 
@@ -241,8 +256,10 @@ export default function App() {
       
       <audio
         ref={audioRef}
-        src="https://assets.mixkit.co/music/preview/mixkit-islamic-ramadan-spirit-1044.mp3"
+        src="https://cdn.pixabay.com/audio/2022/10/18/audio_31c2996653.mp3"
         loop
+        preload="auto"
+        crossOrigin="anonymous"
       />
       
       <AnimatePresence mode="wait">
