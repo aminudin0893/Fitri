@@ -143,6 +143,9 @@ export default function App() {
   const handleOpen = () => {
     setIsOpen(true);
     fireConfetti();
+    if (audioRef.current) {
+      audioRef.current.play().catch(err => console.log("Playback failed:", err));
+    }
   };
 
   const toggleMute = () => {
@@ -228,6 +231,12 @@ export default function App() {
   return (
     <div className={`min-h-screen ${activeTheme.dark} text-white selection:bg-yellow-500/30 transition-colors duration-1000 overflow-hidden relative`}>
       <StarryBackground />
+      
+      <audio
+        ref={audioRef}
+        src="https://assets.mixkit.co/music/preview/mixkit-islamic-ramadan-spirit-1044.mp3"
+        loop
+      />
       
       <AnimatePresence mode="wait">
         {!isOpen ? (
@@ -458,11 +467,6 @@ export default function App() {
 
             {/* Floating Control */}
             <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-4">
-              <audio
-                ref={audioRef}
-                src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a1b2b2.mp3?filename=islamic-background-music-111530.mp3"
-                loop
-              />
               {isOpen && (
                 <motion.button
                   initial={{ scale: 0, opacity: 0 }}
