@@ -218,7 +218,7 @@ export default function App() {
       : `${baseUrl}?cat=${category}`;
     
     const recipient = inputName ? inputName.trim() : (category || 'Sahabat');
-    const greeting = category ? `${recipient}` : (inputName ? inputName.trim() : 'Sahabat');
+    const greeting = category ? `${recipient}` : (inputName ? inputName.trim() : recipient);
     const message = `Assalamu'alaikum ${greeting},\n\nKami dari Keluarga Besar Aminudin ingin menyampaikan ucapan terindah di hari yang fitri ini. Mohon maaf lahir dan batin atas segala khilaf.\n\nSilakan buka pesan spesial untukmu di sini:\n${shareUrl}`;
     const encodedMessage = encodeURIComponent(message);
     
@@ -491,17 +491,6 @@ export default function App() {
 
             {/* Floating Control */}
             <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-4">
-              {isOpen && (
-                <motion.button
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  onClick={toggleMute}
-                  className="bg-white/5 backdrop-blur-xl border border-white/10 text-yellow-400 w-12 h-12 rounded-2xl flex items-center justify-center shadow-2xl hover:bg-white/10 hover:scale-110 active:scale-90 transition-all duration-300 group"
-                  title={isMuted ? "Nyalakan Musik" : "Matikan Musik"}
-                >
-                  {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
-                </motion.button>
-              )}
               <button 
                 onClick={toggleTheme}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 text-yellow-400 w-12 h-12 rounded-2xl flex items-center justify-center shadow-2xl hover:bg-white/10 hover:scale-110 active:scale-90 transition-all duration-300 group"
