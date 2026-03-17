@@ -66,7 +66,7 @@ export default function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState<'green' | 'navy' | 'romantic'>('green');
   const [guestName, setGuestName] = useState('');
-  const [category, setCategory] = useState<'Sahabat' | 'Saudara' | 'Keluarga'>('Sahabat');
+  const [category, setCategory] = useState<'Sahabat' | 'Saudara' | 'Keluarga' | ''>('Sahabat');
   const [inputName, setInputName] = useState('');
   const [inputPhone, setInputPhone] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -93,7 +93,7 @@ export default function App() {
     if (isOpen) {
       let i = 0;
       const personalizedMessage = guestName 
-        ? `Untuk ${category}ku, ${guestName}.\n\n${MESSAGE}`
+        ? (category ? `Untuk ${category}ku, ${guestName}.\n\n${MESSAGE}` : `Untuk ${guestName}.\n\n${MESSAGE}`)
         : MESSAGE;
         
       const interval = setInterval(() => {
@@ -143,8 +143,14 @@ export default function App() {
   const handleOpen = () => {
     setIsOpen(true);
     fireConfetti();
+    // Force play audio on user interaction
     if (audioRef.current) {
-      audioRef.current.play().catch(err => console.log("Playback failed:", err));
+      audioRef.current.muted = false;
+      audioRef.current.play().catch(err => {
+        console.log("Playback failed:", err);
+        // Fallback: try playing again after a short delay
+        setTimeout(() => audioRef.current?.play(), 100);
+      });
     }
   };
 
@@ -196,8 +202,9 @@ export default function App() {
       ? `${baseUrl}?to=${inputName.trim().replace(/\s+/g, '-')}&cat=${category}`
       : `${baseUrl}?cat=${category}`;
     
-    const recipient = inputName ? inputName.trim() : category;
-    const message = `Assalamu'alaikum ${recipient},\n\nKami dari Keluarga Besar Aminudin ingin menyampaikan ucapan terindah di hari yang fitri ini. Mohon maaf lahir dan batin atas segala khilaf.\n\nSilakan buka pesan spesial untukmu di sini:\n${shareUrl}`;
+    const recipient = inputName ? inputName.trim() : (category || 'Sahabat');
+    const greeting = category ? `${recipient}` : (inputName ? inputName.trim() : 'Sahabat');
+    const message = `Assalamu'alaikum ${greeting},\n\nKami dari Keluarga Besar Aminudin ingin menyampaikan ucapan terindah di hari yang fitri ini. Mohon maaf lahir dan batin atas segala khilaf.\n\nSilakan buka pesan spesial untukmu di sini:\n${shareUrl}`;
     const encodedMessage = encodeURIComponent(message);
     
     let cleanPhone = inputPhone.replace(/\D/g, '');
@@ -271,18 +278,18 @@ export default function App() {
               
               {!isRecipient && (
                 <div className="mb-8 space-y-4">
-                  <div className="flex gap-2 p-1 bg-white/5 rounded-2xl border border-white/10">
-                    {(['Sahabat', 'Saudara', 'Keluarga'] as const).map((cat) => (
+                  <div className="flex flex-wrap gap-2 p-1 bg-white/5 rounded-2xl border border-white/10">
+                    {(['Sahabat', 'Saudara', 'Keluarga', ''] as const).map((cat) => (
                       <button
                         key={cat}
                         onClick={() => setCategory(cat)}
-                        className={`flex-1 py-2 text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all ${
+                        className={`flex-1 min-w-[80px] py-2 text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all ${
                           category === cat 
                             ? 'bg-yellow-400 text-emerald-950 shadow-lg' 
                             : 'text-gray-400 hover:text-white'
                         }`}
                       >
-                        {cat}
+                        {cat || 'Tanpa Kategori'}
                       </button>
                     ))}
                   </div>
